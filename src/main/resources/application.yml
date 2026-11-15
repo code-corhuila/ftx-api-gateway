@@ -1,0 +1,38 @@
+# ftx-api-gateway: the single public entry point of Futbolix (ADR-004), port 8080.
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: ftx-api-gateway
+
+gateway:
+  upstreams:
+    # Service names inside the platform network (each service's deploy/compose.yml).
+    customers: ${CUSTOMERS_API_URL:http://ftx-customers-api:8081}
+    courts: ${COURTS_API_URL:http://ftx-courts-api:8082}
+    reservations: ${RESERVATIONS_API_URL:http://ftx-reservations-api:8083}
+    schedules: ${SCHEDULES_API_URL:http://ftx-schedules-api:8085}
+  cors:
+    # The web app in development (ftx-front, Vite). Comma-separated list.
+    allowed-origins: ${GATEWAY_CORS_ORIGINS:http://localhost:5173}
+  rate-limit:
+    create-per-minute: ${GATEWAY_RATE_CREATE:10}
+    lookup-per-minute: ${GATEWAY_RATE_LOOKUP:30}
+    login-per-minute: ${GATEWAY_RATE_LOGIN:10}
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true                    # /actuator/health/liveness and /readiness for the container
+
+logging:
+  structured:
+    format:
+      console: ecs                       # JSON lines (13-operations/observability.md)
