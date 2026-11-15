@@ -50,7 +50,7 @@ A service that is down returns 503 for its routes only; the others keep working.
 
 ```
 ApiGatewayApplication
-RoutesConfiguration      routes (Java DSL), timeouts, CORS
+RoutesConfiguration      routes (Java DSL) and timeouts; CORS in application.yml (globalcors)
 EdgeHeadersFilter        strips X-User-*, sets X-Correlation-Id      (first global filter)
 RateLimitFilter          429 on create / look-up / login floods       (second global filter)
 GatewayErrorHandler      ErrorResponse for 404 / 503 / 504

@@ -1,6 +1,5 @@
 package com.futbolix.gateway;
 
-import java.net.ConnectException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
@@ -46,17 +45,14 @@ public class GatewayErrorHandler implements ErrorWebExceptionHandler {
             status = HttpStatus.GATEWAY_TIMEOUT;
             code = "SERVICE_UNAVAILABLE";
             message = "The service did not answer in time";
-        } else if (causedBy(error, ConnectException.class)
-                || error instanceof ResponseStatusException rse && rse.getStatusCode().value() == 503) {
-            status = HttpStatus.SERVICE_UNAVAILABLE;
-            code = "SERVICE_UNAVAILABLE";
-            message = "The service is temporarily unavailable";
         } else if (error instanceof ResponseStatusException rse && rse.getStatusCode().is4xxClientError()) {
             status = rse.getStatusCode();
             code = "BAD_REQUEST";
             message = "Invalid request";
         } else {
-            status = HttpStatus.BAD_GATEWAY;
+            // The service could not be reached (refused, reset, unknown host...): for the client it is
+            // the same thing, the service is not available right now.
+            status = HttpStatus.SERVICE_UNAVAILABLE;
             code = "SERVICE_UNAVAILABLE";
             message = "The service is temporarily unavailable";
         }
