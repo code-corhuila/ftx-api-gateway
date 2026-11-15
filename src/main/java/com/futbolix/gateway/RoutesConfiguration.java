@@ -14,8 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * in each service, which checks the administrator token itself. The Authorization header is
  * forwarded unchanged.
  *
- * CORS for the web app is configured in application.yml (globalcors), so the gateway's own
- * handler mapping answers the preflight requests.
+ * CORS for the web app is answered before routing by {@link CorsFilter}.
  *
  * Order matters: the schedule paths under /courts/{id}/ go to ftx-schedules-api before the general
  * /courts/** route of ftx-courts-api catches them.
