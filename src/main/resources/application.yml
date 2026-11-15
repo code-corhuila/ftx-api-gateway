@@ -5,30 +5,6 @@ server:
 spring:
   application:
     name: ftx-api-gateway
-  cloud:
-    gateway:
-      # CORS for the web app (ftx-front runs on another origin in development). Spring Cloud Gateway
-      # 2025 reads the "server.webflux" prefix; the short one is kept for older releases.
-      server:
-        webflux:
-          globalcors:
-            cors-configurations:
-              '[/api/**]':
-                allowed-origins: ${GATEWAY_CORS_ORIGINS:http://localhost:5173}
-                allowed-methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
-                allowed-headers: [Authorization, Content-Type, Idempotency-Key, X-Correlation-Id]
-                exposed-headers: [X-Correlation-Id, Retry-After]
-                allow-credentials: false
-                max-age: 3600
-      globalcors:
-        cors-configurations:
-          '[/api/**]':
-            allowed-origins: ${GATEWAY_CORS_ORIGINS:http://localhost:5173}
-            allowed-methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
-            allowed-headers: [Authorization, Content-Type, Idempotency-Key, X-Correlation-Id]
-            exposed-headers: [X-Correlation-Id, Retry-After]
-            allow-credentials: false
-            max-age: 3600
 
 gateway:
   upstreams:
@@ -37,6 +13,9 @@ gateway:
     courts: ${COURTS_API_URL:http://ftx-courts-api:8082}
     reservations: ${RESERVATIONS_API_URL:http://ftx-reservations-api:8083}
     schedules: ${SCHEDULES_API_URL:http://ftx-schedules-api:8085}
+  cors:
+    # The web app in development (ftx-front, Vite). Comma-separated list.
+    allowed-origins: ${GATEWAY_CORS_ORIGINS:http://localhost:5173}
   rate-limit:
     create-per-minute: ${GATEWAY_RATE_CREATE:10}
     lookup-per-minute: ${GATEWAY_RATE_LOOKUP:30}
