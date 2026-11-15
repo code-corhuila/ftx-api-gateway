@@ -1,0 +1,20 @@
+# ftx-api-gateway container: the only public port of the platform (ADR-004).
+# Included by ftx-workflow:
+#
+#   include:
+#     - path: ../ftx-api-gateway/deploy/compose.yml
+services:
+  ftx-api-gateway:
+    build: ..
+    image: ftx-api-gateway:local
+    restart: unless-stopped
+    environment:
+      GATEWAY_CORS_ORIGINS: ${GATEWAY_CORS_ORIGINS:-http://localhost:5173}
+    ports:
+      - "${GATEWAY_PORT:-8080}:8080"
+    networks: [platform]
+
+networks:
+  platform:
+    name: ${PLATFORM_NETWORK:-platform}
+    external: true
